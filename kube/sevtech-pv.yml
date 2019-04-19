@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: sevtech-pv-storage
+  namespace: sevtech
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  rbd:
+    monitors:
+      - 10.73.0.44:6789
+      - 10.73.0.45:6789
+      - 10.73.0.42:6789
+    pool: kubepool
+    image: sevtech-storage
+    user: admin
+    secretRef:
+      name: ceph-secret
+    fsType: ext4
+    readOnly: false

@@ -1,0 +1,39 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: web
+  namespace: sevtech
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: sevtech
+          image: 'itzg/minecraft-server'
+          ports:
+            - containerPort: 25565
+          env:
+            - name: 'EULA'
+              value: 'TRUE'
+            - name: 'TYPE'
+              value: 'CURSEFORGE'
+            - name: 'FTB_SERVER_MOD'
+              value: 'https://minecraft.curseforge.com/projects/sevtech-ages/files/2570735/download'
+
+          volumeMounts:
+            - name: sevtech-storage
+              mountPath: /data/FeedTheBeast/backups
+      initContainers:
+        - name: permission-fix
+          image: busybox
+          command: ['/bin/chmod', '777', '/data']
+          volumeMounts:
+            - name: sevtech-storage
+              mountPath: /data
+      volumes:
+        - name: sevtech-storage
+          persistentVolumeClaim:
+            claimName: sevtech-pvc-storage
